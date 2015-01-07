@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+            <h2>Flyweight Pattern</h2>
+
+In computer programming, flyweight is a software design pattern. A flyweight is an object that minimizes memory use by sharing as much data as possible with other similar objects; it is a way to use objects in large numbers when a simple repeated representation would use an unacceptable amount of memory. Often some parts of the object state can be shared, and it is common practice to hold them in external data structures and pass them to the flyweight objects temporarily when they are used.
+
+A classic example usage of the flyweight pattern is the data structures for graphical representation of characters in a word processor. It might be desirable to have, for each character in a document, a glyph object containing its font outline, font metrics, and other formatting data, but this would amount to hundreds or thousands of bytes for each character. Instead, for every character there might be a reference to a flyweight glyph object shared by every instance of the same character in the document; only the position of each character (in the document and/or the page) would need to be stored internally.
+
+Another example is string interning.
+
+In other contexts the idea of sharing identical data structures is called hash consing.
+
+<h2>Immutability and equality</h2>
+To enable safe sharing, between clients and threads, Flyweight objects must be immutable. Flyweight objects are by definition value objects. The identity of the object instance is of no consequence therefore two Flyweight instances of the same value are considered equal.
+
+
+<h2>Concurrency</h2>
+Special consideration must be made in scenarios where Flyweight objects are created on multiple threads. If the list of values is finite and known in advance the Flyweights can be instantiated ahead of time and retrieved from a container on multiple threads with no contention. If Flyweights are instantiated on multiple threads there are two options:
+
+Make Flyweight instantiation single threaded thus introducing contention and ensuring one instance per value.
+Allow concurrent threads to create multiple Flyweight instances thus eliminating contention and allowing multiple instances per value. This option is only viable if the equality criterion is met.
+
+    </body>
+</html>
