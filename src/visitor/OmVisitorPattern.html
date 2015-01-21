@@ -1,0 +1,37 @@
+<h1>Visitor pattern</h1>
+
+In object-oriented programming and software engineering, the visitor design pattern is a way of separating an algorithm from an object structure on which it operates. A practical result of this separation is the ability to add new operations to existing object structures without modifying those structures. It is one way to follow the open/closed principle.
+
+In essence, the visitor allows one to add new virtual functions to a family of classes without modifying the classes themselves; instead, one creates a visitor class that implements all of the appropriate specializations of the virtual function. The visitor takes the instance reference as input, and implements the goal through double dispatch.
+
+
+<h1>Definition</h1>
+The Gang of Four defines the Visitor as: "Represent an operation to be performed on elements of an object structure. Visitor lets you define a new operation without changing the classes of the elements on which it operates."—?=
+
+The nature of the Visitor makes it an ideal pattern to plug into public APIs thus allowing its clients to perform operations on a class using a “visiting” class without having to modify the source.
+
+<h1>Motivation</h1>
+Consider the design of a 2D CAD system. At its core there are several types to represent basic geometric shapes like circles, lines and arcs. The entities are ordered into layers, and at the top of the type hierarchy is the drawing, which is simply a list of layers, plus some additional properties.
+
+A fundamental operation on this type hierarchy is saving the drawing to the system's native file format. At first glance it may seem acceptable to add local save methods to all types in the hierarchy. But then we also want to be able to save drawings to other file formats, and adding more and more methods for saving into lots of different file formats soon clutters the relatively pure geometric data structure we started out with.
+
+A naive way to solve this would be to maintain separate functions for each file format. Such a save function would take a drawing as input, traverse it and encode into that specific file format. But if you do this for several different formats, you soon begin to see lots of duplication between the functions. For example, saving a circle shape in a raster format requires very similar code no matter what specific raster form is used, and is different from other primitive shapes; the case for other primitive shapes like lines and polygons is similar. The code therefore becomes a large outer loop traversing through the objects, with a large decision tree inside the loop querying the type of the object. Another problem with this approach is that it is very easy to miss a shape in one or more savers, or a new primitive shape is introduced but the save routine is implemented only for one file type and not others, leading to code extension and maintenance problems.
+
+Instead, one could apply the Visitor pattern. The Visitor pattern encodes a logical operation on the whole hierarchy into a single class containing one method per type. In our CAD example, each save function would be implemented as a separate Visitor subclass. This would remove all duplication of type checks and traversal steps. It would also make the compiler complain if a shape is omitted.
+
+Another motivation is to reuse iteration code. For example iterating over a directory structure could be implemented with a visitor pattern. This would allow you to create file searches, file backups, directory removal, etc. by implementing a visitor for each function while reusing the iteration code.
+
+<h1>Details</h1>
+The visitor pattern requires a programming language that supports single dispatch. Under this condition, consider two objects, each of some class type; one is called the "element", and the other is called the "visitor". An element has an accept() method that can take the visitor as an argument. The accept() method calls a visit() method of the visitor; the element passes itself as an argument to the visit() method. Thus:
+
+When the accept() method is called in the program, its implementation is chosen based on both:
+The dynamic type of the element.
+The static type of the visitor.
+When the associated visit() method is called, its implementation is chosen based on both:
+The dynamic type of the visitor.
+The static type of the element as known from within the implementation of the accept() method, which is the same as the dynamic type of the element. (As a bonus, if the visitor can't handle an argument of the given element's type, then the compiler will catch the error.)
+Consequently, the implementation of the visit() method is chosen based on both:
+The dynamic type of the element.
+The dynamic type of the visitor.
+This effectively implements double dispatch; indeed, because the Lisp language's object system supports multiple dispatch (not just single dispatch), implementing the visitor pattern in Lisp is trivial.
+In this way, a single algorithm can be written for traversing a graph of elements, and many different kinds of operations can be performed during that traversal by supplying different kinds of visitors to interact with the elements based on the dynamic types of both the elements and the visitors.
